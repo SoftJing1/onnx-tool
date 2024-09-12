@@ -53,7 +53,7 @@ def onnxdtype2npdtype(data_type):
     if data_type == onnx.TensorProto.BOOL:
         return numpy.bool_
     if data_type == onnx.TensorProto.STRING:
-        return numpy.string_
+        return numpy.bytes_
 
 
 def type_of_tensor(tensor):
@@ -382,8 +382,7 @@ class Tensor():
             self.name = t.name
             self.proto = t
             self.numpy = tensorproto2ndarray(t)
-            # NOTE: The shape of the tensor should be a list.
-            self.shape = list(self.numpy.shape)
+            self.shape = self.numpy.shape
             self.type = STATIC_TENSOR
             self.dtype = self.numpy.dtype.type
         else:
@@ -516,13 +515,4 @@ def create_dynamic_Tensor(name: str, ndarray: numpy.ndarray):
     t.shape = t.numpy.shape
     t.dtype = t.numpy.dtype.type
     t.proto = t.make_value_proto()
-    return t
-
-def create_tensor(name: str, type, shape, dtype):
-    t = Tensor(name)
-    t.type = type
-    t.numpy = None
-    t.shape = shape
-    t.proto = t.make_value_proto()
-    t.dtype = dtype
     return t
